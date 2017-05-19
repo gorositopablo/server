@@ -12,6 +12,7 @@ use OC\Files\Storage\Temporary;
 use \OC\Security\CertificateManager;
 use OCP\IConfig;
 use OCP\ILogger;
+use OCP\Security\ISecureRandom;
 
 /**
  * Class CertificateManagerTest
@@ -45,7 +46,17 @@ class CertificateManagerTest extends \Test\TestCase {
 		$config->expects($this->any())->method('getSystemValue')
 			->with('installed', false)->willReturn(true);
 
-		$this->certificateManager = new CertificateManager($this->username, new \OC\Files\View(), $config, $this->createMock(ILogger::class));
+		$random = $this->createMock(ISecureRandom::class);
+		$random->method('generate')
+			->willReturn('random');
+
+		$this->certificateManager = new CertificateManager(
+			$this->username,
+			new \OC\Files\View(),
+			$config,
+			$this->createMock(ILogger::class),
+			$random
+		);
 	}
 
 	protected function tearDown() {
